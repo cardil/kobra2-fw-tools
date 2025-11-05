@@ -3,7 +3,7 @@
 This repository contains tools for the Anycubic Kobra 2 Series 3D printers.
 
 > [!WARNING]
-> This repository is unmaintained. I'm not using the printer anymore and I don't have the time to maintain it. I'm archiving this repository and will delete it in 1 year. So if you want to use it, you need to fork it and maintain it yourself. Same goes for the firmware repository.
+> This repository is only partially maintained. I'm not the original author, just some user that tries to keep it alive.
 
 ### Documentation
 
