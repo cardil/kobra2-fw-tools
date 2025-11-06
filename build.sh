@@ -241,25 +241,13 @@ if [ -n "$build_output" ]; then
     rm -f "$project_root/update.bin"
 fi
 
-# use the auto install tool if present
-if [ -f "$auto_install_tool" ]; then
-    # Ask if the user wants to attempt to auto install the update now. If yes then run the auto install script
-    read -r -p "Do you want to attempt to auto install the update via SSH? [y/N] " response
-    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-        # Run the auto update tool
-        if [[ "$auto_install_tool" == *.py ]]; then
-            python3 "$auto_install_tool"
-        else
-            "$auto_install_tool"
-        fi
-    fi
-fi
-
 echo
 echo -e "${YELLOW}Selected firmware file: $selected_firmware_file ${NC}"
 echo -e "${YELLOW}Selected configuration file: $selected_config_file ${NC}"
 echo -e "${YELLOW}Modded firmware file: $moddedfile ${NC}"
 echo -e "${GREEN}Firmware build complete ${NC}"
 echo
+
+"$project_root/flash.sh" "$selected_config_file"
 
 exit 0
