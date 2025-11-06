@@ -11,4 +11,3 @@ auto_install.cfg
 printer*.cfg
 options.cfg
 /emmc_dump
-auto_install.sh
