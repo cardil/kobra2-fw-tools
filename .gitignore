@@ -2,6 +2,9 @@ update/*.swu
 FW/*.bin
 FW/*.swu
 FW/*.zip
+FW/modded/*.bin
+FW/modded/*.swu
+FW/modded/*.zip
 unpacked/*
 installed_options.log
 auto_install.cfg

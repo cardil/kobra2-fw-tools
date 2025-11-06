@@ -6,13 +6,12 @@ To perform a backup follow these steps:
 
 ## By the uboot console
 
-1. Downgrade to the original firmware version 2.3.9 (newer versions have the serial console disabled)
-2. Connect UART cable to the printer motherboard. Don't conect the +5V pin, if you have one, as printer will boot partially from it, and you will not able to enter uboot. Connect to the serial console with 115200 8N1:
-`tio -b 115200 /dev/ttyUSB0`, and power on the printer.
-   ![UART connection](images/UART.webp)
-3. Stop the booting process by holding key 's' (or use any custom firmware update that has the UART enabled)
-4. Insert a USB disk (FAT32 formatted) with the file [backup.scr](../extra-stuff/emmc/backup.scr) on it for complete emmc backup.
-5. From the uboot shell enter the following:
+1. Follow the [UART guide](UART.md) to get into the u-boot console. You should see:
+   ```shell
+   =>
+   ```
+2. Insert a USB disk (FAT32 formatted) with the file [backup.scr](../extra-stuff/emmc/backup.scr) on it for complete emmc backup.
+3. From the uboot shell enter the following:
 
 ```sh
 usb reset
@@ -55,7 +54,7 @@ source 42000000
 source 42000000
 ```
 
-7. From a Linux machine export the complete backup as a file from the USB disk:
+2. From a Linux machine export the complete backup as a file from the USB disk:
 
 ```sh
 dd if=/dev/sdh of=emmc_backup.bin bs=512 count=15269888 status=progress

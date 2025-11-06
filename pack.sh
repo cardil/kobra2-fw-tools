@@ -69,12 +69,15 @@ rm -f sw-description.sig
 openssl dgst -sha256 -sign ../RESOURCES/KEYS/swupdate_private.pem sw-description >sw-description.sig
 
 # pack the input files as update.swu
-for i in $FILES; do echo "$i"; done | cpio -ov -H crc >../update/update.swu
+for i in $FILES; do echo "$i"; done | cpio -ov -H crc > "$project_root/update/update.swu"
 
 cd ..
 
 echo ""
 echo -e "${GREEN}Packing done: Use the file update/update.swu to do USB update${NC}"
+echo ""
+echo -e "${YELLOW}[WARN] Make sure the swupdate certs are replaced on the printer before flashing!${NC}"
+echo -e "${PURPLE}[TIP] To root the printer see docs/ROOT.md${NC}"
 echo ""
 
 # select a config file
@@ -114,9 +117,9 @@ if [ -f "$selected_config_file" ]; then
 fi
 
 # use the auto install tool if present
-if [ -f "$auto_install_tool" ]; then
+if [[ "${AUTO_INSTALL:-true}" == 'true' ]] && [ -f "$auto_install_tool" ]; then
   # Ask if the user wants to attempt to auto install the update now. If yes then run the auto install script
-  read -r -p "Do you want to attempt to auto install the update? [y/N] " response
+  read -r -p "Do you want to attempt to auto install the update via SSH? [y/N] " response
   if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
     # Run the auto update tool
     if [[ "$auto_install_tool" == *.py ]]; then

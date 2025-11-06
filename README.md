@@ -9,24 +9,31 @@ This repository contains tools for the Anycubic Kobra 2 Series 3D printers.
 
 Documentation can be found in the `docs` directory.
 
-- [VERSIONS.md](docs/VERSIONS.md) - Known firmware versions.
-- [LINKS.md](docs/LINKS.md) - Useful things/addons for the printer.
+- [UART.md](docs/UART.md) - How to connect to the UART serial console.
+- [ROOT.md](docs/ROOT.md) - How to root the printer.
+- [EMMC_BACKUP.md](docs/EMMC_BACKUP.md) - How to backup the EMMC.
+- [EMMC_RESTORE.md](docs/EMMC_RESTORE.md) - How to restore the EMMC.
 - [OPTIONS.md](docs/OPTIONS.md) - Options for the firmware.
 - [GCODE_COMMANDS.md](docs/GCODE_COMMANDS.md) - GCODE commands.
 - [MQTT_API.md](docs/MQTT_API.md) - MQTT API.
 - [COMMANDS.md](docs/COMMANDS.md) - Useful commands.
 - [PRINTER_CFG.md](docs/PRINTER_CFG.md) - Printer.cfg things.
-- [EMMC_BACKUP.md](docs/EMMC_BACKUP.md) - How to backup the EMMC.
-- [EMMC_RESTORE.md](docs/EMMC_RESTORE.md) - How to restore the EMMC.
 - [ENTER_FEL_MODE.md](docs/ENTER_FEL_MODE.md) - How to enter FEL mode.
 - [DOWNLOAD_SDK.md](docs/DOWNLOAD_SDK.md) - How to download the SDK.
 - [OLD_INFO.md](docs/OLD_INFO.md) - Old information.
 - [CREDITS.md](docs/CREDITS.md) - Credits.
+- [LINKS.md](docs/LINKS.md) - Useful things/addons for the printer.
+- [VERSIONS.md](docs/VERSIONS.md) - Known firmware versions.
+
+## Discussion
+
+- [Telegram Group](https://t.me/kobra2modding)
+- [Link (klipper.discourse.group)](https://klipper.discourse.group/t/printer-cfg-for-anycubic-kobra-2-plus-pro-max/11658)
 
 ## Usage
 
 > [!IMPORTANT]
-> Please backup all files in `/user` so you don't lose access to anycubic cloud and OTA updates. You can use the [EMMC_BACKUP.md](./EMMC_BACKUP.md) guide to backup the whole system. But backing up `/user` is enough to keep access to anycubic cloud and OTA updates.
+> Please backup all files in `/user` so you don't lose access to anycubic cloud and OTA updates. You can use the [EMMC_BACKUP.md](docs/EMMC_BACKUP.md) guide to backup the whole system. But backing up `/user` is enough to keep access to anycubic cloud and OTA updates.
 >
 > You could use `dd` command to backup also.
 
@@ -67,7 +74,7 @@ At the end, if you selected `ssh` and `root_access` with a password, you will be
 
 #### 7. If your printer is still with the original firmware, you have to make root access first.
 
-Then replace the `/etc/swupdate_public.pem` in the printer with the one from the `RESOURCES` directory or create your own (make a copy first of the original `/etc/swupdate_public.pem` key in case you want to return to the original `ota` updates).
+Follow the [ROOT guide](docs/ROOT.md).
 
 Then apply the newly generated custom software `update/update.swu` by USB update (place the file `update.swu` in the folder `update` on the root of a FAT32 formatted USB disk). If your printer already has custom update installed, then you can directly apply the new update by USB update.
 

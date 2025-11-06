@@ -171,12 +171,13 @@ if [ -z "$selected_firmware_file" ]; then
     # If there are files in the FW folder, ask the user if they want to use the files in the FW folder
     if [ -n "$all_files" ]; then
         #   List all firmwares and ask user to pick an available firmware version
-        echo "Available firmware versions:"
+        firmware_files=()
         for file in $all_files; do
-            echo $file
+            firmware_files+=("$file")
+            firmware_files+=("")
         done
-        read -p "Which file do you want to use? " firmware_file
-        if [ -f "$FW_DIR/$firmware_file" ]; then
+        firmware_file=$(dialog --keep-tite --stdout --menu "Which firmware do you want to use?" 22 76 16 "${firmware_files[@]}")
+        if [ -n "$firmware_file" ] && [ -f "$FW_DIR/$firmware_file" ]; then
             echo "Using firmware $firmware_file"
         else
             echo "Firmware file not found"
@@ -204,30 +205,33 @@ fi
 
 # Build the firmware
 echo "Building firmware..."
-"$project_root/pack.sh"
+AUTO_INSTALL=false "$project_root/pack.sh"
 if [ $? -ne 0 ]; then
     echo "Failed to build firmware"
     exit 6
 fi
 
+# try to find out the app version (like app_ver="3.1.0")
+def_target="$ROOTFS_DIR/app/app"
+app_ver=$("$app_version_tool" "$def_target")
+if [ $? != 0 ]; then
+    echo -e "${RED}ERROR: Cannot find the app version ${NC}"
+    exit 4
+fi
+
+# try to find out the model
+app_model=$("$app_model_tool" "$def_target")
+if [ $? != 0 ]; then
+    echo -e "${RED}ERROR: Cannot find the app model ${NC}"
+    exit 5
+fi
+
+mkdir -p "${project_root}/FW/modded"
+moddedfile="FW/modded/${app_model}-${app_ver}.swu"
+cp "${project_root}/update/update.swu" "${project_root}/${moddedfile}"
+
 # Process the output file if set
 if [ -n "$build_output" ]; then
-
-    # try to find out the app version (like app_ver="3.1.0")
-    def_target="$ROOTFS_DIR/app/app"
-    app_ver=$("$app_version_tool" "$def_target")
-    if [ $? != 0 ]; then
-        echo -e "${RED}ERROR: Cannot find the app version ${NC}"
-        exit 4
-    fi
-
-    # try to find out the model
-    app_model=$("$app_model_tool" "$def_target")
-    if [ $? != 0 ]; then
-        echo -e "${RED}ERROR: Cannot find the app model ${NC}"
-        exit 5
-    fi
-
     rm -f "$project_root/update.bin"
     rm -f "$project_root/update.zip"
     zip -r "$project_root/update.zip" update
@@ -240,7 +244,7 @@ fi
 # use the auto install tool if present
 if [ -f "$auto_install_tool" ]; then
     # Ask if the user wants to attempt to auto install the update now. If yes then run the auto install script
-    read -r -p "Do you want to attempt to auto install the update? [y/N] " response
+    read -r -p "Do you want to attempt to auto install the update via SSH? [y/N] " response
     if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
         # Run the auto update tool
         if [[ "$auto_install_tool" == *.py ]]; then
@@ -254,6 +258,7 @@ fi
 echo
 echo -e "${YELLOW}Selected firmware file: $selected_firmware_file ${NC}"
 echo -e "${YELLOW}Selected configuration file: $selected_config_file ${NC}"
+echo -e "${YELLOW}Modded firmware file: $moddedfile ${NC}"
 echo -e "${GREEN}Firmware build complete ${NC}"
 echo
 

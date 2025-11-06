@@ -1,12 +1,15 @@
 #!/bin/bash
 
-username="root"
-ip="192.168.1.242"
-port="22"
+set -e
+
+ip="$(dialog --stdout --inputbox 'Printer IP' 10 40 192.168.1.242)"
+username="$(dialog --stdout --inputbox 'SSH Username' 10 40 root)"
+port="$(dialog --stdout --inputbox 'SSH Port' 10 40 22)"
 
 # SCP file transfer
 echo "Uploading..."
-scp -o StrictHostKeyChecking=no -P $port update/update.swu $username@$ip:/mnt/UDISK/update.swu
+echo scp -o StrictHostKeyChecking=no -P $port update/update.swu $username@$ip:/mnt/UDISK/update.swu
+exit 43
 # MD5 Calculation
 md5sum_local=$(md5sum update/update.swu | awk '{ print $1 }')
 echo "MD5 Local : $md5sum_local"
