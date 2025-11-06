@@ -1,9 +1,11 @@
 #!/bin/bash
 
-project_root="$PWD"
+project_root="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null && pwd )"
 
 # Source the utils.sh file
 source "$project_root/TOOLS/helpers/utils.sh" "$project_root"
+
+check_tools 'dialog'
 
 # select a config file
 selected_config_file="options.cfg"

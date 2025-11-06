@@ -1,6 +1,6 @@
 #!/bin/bash
 
-project_root="$PWD"
+project_root="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null && pwd )"
 
 # Source the utils.sh file
 source "$project_root/TOOLS/helpers/utils.sh" "$project_root"

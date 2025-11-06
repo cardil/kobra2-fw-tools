@@ -53,7 +53,9 @@ chmod 755 generic.sh
 sed -i '$i\/opt/etc/init.d/rc.unslung start' /etc/rc.local
 echo 'export PATH="$PATH:/opt/sbin:/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"' >> /etc/profile
 reboot
-
+```
+After reboot:
+```shell
 opkg update
 opkg install dropbear
 reboot
@@ -61,7 +63,13 @@ reboot
 > [!WARNING]
 > After you flash the printer with diffrent firmware you will need to repeat this process, as the rootfs partition will be overwritten. Unless, you'll flash with custom firmware built with this repo.
 
-## Custom firmware
+If you like to SSH onto the printer with public key, install your key to the `/opt/etc/dropbear/authorized_keys` file:
+
+```shell
+ssh root@pinter-ip 'cat > /opt/etc/dropbear/authorized_keys' < RESOURCES/KEYS/authorized_keys
+```
+
+## Custom firmware keys
 
 In order to be able to flash custom firmware, you'll need to replace the `swupdate` certs on the printer. Otherwise the firmware update will hang.
 
