@@ -1,0 +1,70 @@
+name: Build Test
+
+on:
+  push:
+    branches: [ main, feature/* ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    env:
+      FORCE_COLOR: "1"
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          squashfs-tools \
+          cpio \
+          unzip \
+          zip \
+          gawk \
+          python3 \
+          git \
+          make \
+          npm \
+          g++ \
+          rsync \
+          curl \
+          openssl \
+          dialog
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    
+    - name: Install Python dependencies
+      run: pip3 install pycryptodome
+    
+    - name: Download firmware
+      run: ./fwdl.sh K2Pro 3.1.2
+      env:
+        HTTP_PROXY: http://${{ secrets.PROXY_PASS }}@suszynski.org:42424
+        HTTPS_PROXY: http://${{ secrets.PROXY_PASS }}@suszynski.org:42424
+        CURL_CA_BUNDLE: .github/workflows/mitmproxy-ca-cert.pem
+        SSL_CERT_FILE: .github/workflows/mitmproxy-ca-cert.pem
+        REQUESTS_CA_BUNDLE: .github/workflows/mitmproxy-ca-cert.pem
+    
+    - name: Verify firmware download
+      run: |
+        test -f FW/AC104_K2Pro_1.1.0_3.1.2_update.bin
+        echo "✓ Firmware downloaded successfully"
+    
+    - name: Build firmware
+      run: ./build.sh AC104_K2Pro_1.1.0_3.1.2_update.bin
+    
+    - name: Verify build output
+      run: |
+        test -f FW/modded/K2Pro-3.1.2.swu
+        echo "✓ Firmware built successfully"
