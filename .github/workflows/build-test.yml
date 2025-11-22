@@ -65,16 +65,8 @@ jobs:
       run: ./fwdl.sh K2Pro 3.1.2
       env:
         # Using Mitm archiver to bypass upstream downlods
-        HTTP_PROXY: http://${{ secrets.PROXY_PASS }}@${{ secrets.PROXY_HOST }}
         HTTPS_PROXY: http://${{ secrets.PROXY_PASS }}@${{ secrets.PROXY_HOST }}
         CURL_CA_BUNDLE: .github/workflows/mitmproxy-ca-cert.pem
-        SSL_CERT_FILE: .github/workflows/mitmproxy-ca-cert.pem
-        REQUESTS_CA_BUNDLE: .github/workflows/mitmproxy-ca-cert.pem
-    
-    - name: Verify firmware download
-      run: |
-        cd FW && md5sum --check --ignore-missing *.md5sum
-        echo "✓ Firmware downloaded successfully"
     
     - name: Build firmware
       run: ./build.sh AC104_K2Pro_1.1.0_3.1.2_update.bin
