@@ -1,11 +1,22 @@
 #!/bin/bash
 
 # global definitions:
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-PURPLE='\033[0;35m'
-NC='\033[0m'
+# Only use colors if:
+# - NO_COLOR is not set AND
+# - (FORCE_COLOR is set OR terminal is interactive)
+if [ -z "$NO_COLOR" ] && { [ -n "$FORCE_COLOR" ] || [ -t 1 ]; }; then
+    RED='\033[0;31m'
+    GREEN='\033[0;32m'
+    YELLOW='\033[0;33m'
+    PURPLE='\033[0;35m'
+    NC='\033[0m'
+else
+    RED=''
+    GREEN=''
+    YELLOW=''
+    PURPLE=''
+    NC=''
+fi
 
 FW_DIR="$project_root/FW"
 

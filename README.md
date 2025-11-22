@@ -33,11 +33,12 @@ Documentation can be found in the `docs` directory.
 ## Usage
 
 > [!IMPORTANT]
-> Please backup all files in `/user` so you don't lose access to anycubic cloud and OTA updates. You can use the [EMMC_BACKUP.md](docs/EMMC_BACKUP.md) guide to backup the whole system. But backing up `/user` is enough to keep access to anycubic cloud and OTA updates.
+> Please **backup** all files in `/user` so you don't lose access to anycubic cloud and OTA updates. You can use the [EMMC_BACKUP.md](docs/EMMC_BACKUP.md) guide to backup the whole system. But backing up `/user` is enough to keep access to anycubic cloud and OTA updates.
 >
 > You could use `dd` command to backup also.
 
-> [!WARNING] > **IF YOU DO NOT BACKUP OR DELETE THE FILES IN `/user` YOU WILL LOSE ACCESS TO ANYCUBIC CLOUD AND OTA UPDATES. YOU HAVE BEEN WARNED.**
+> [!WARNING]
+> **IF YOU DO NOT BACKUP OR DELETE THE FILES IN `/user` YOU WILL LOSE ACCESS TO ANYCUBIC CLOUD AND OTA UPDATES. YOU HAVE BEEN WARNED.**
 >
 > Everything you do is on **your** own risk. I am **not** responsible for any damage you do to your printer.
 

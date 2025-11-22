@@ -1,0 +1,6 @@
+--- rc.local
++++ rc.local
+@@ -8,2 +8,3 @@
+ /opt/etc/init.d/rc.unslung start
++/opt/bin/webfsd -p __PORT__
+ exit 0

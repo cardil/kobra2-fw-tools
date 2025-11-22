@@ -14,7 +14,7 @@ usage() {
 }
 
 # check the required tools
-check_tools "awk zip app_version.sh app_model.sh ack2_swu_encrypt.py python3"
+check_tools "awk zip app_version.sh app_model.sh ack2_swu_encrypt.py python3 dialog"
 
 # set the custom encrypt tool
 ENCRYPT_TOOL=$(which "ack2_swu_encrypt.py")
@@ -152,17 +152,26 @@ if [ -z "$selected_firmware_file" ]; then
 
     # If there are no files in the FW folder, ask the user to download the firmware
     if [ -z "$all_files" ]; then
-        read -p "No firmware files found in the FW folder. Do you want to download the firmware? (y/n) " -n 1 -r
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            echo
-            read -p "Enter version: " par_version
-            read -p "Enter model: " par_model
+        if dialog --keep-tite --yesno "No firmware files found in the FW folder.\n\nDo you want to download the firmware?" 10 60; then
+            # Get version from user
+            par_version=$(dialog --keep-tite --stdout --inputbox "Enter firmware version:\n\n(e.g., 3.0.5, 3.0.9, 3.1.0, 3.1.2)" 12 60 "3.1.2")
+            if [ $? -ne 0 ] || [ -z "$par_version" ]; then
+                echo "Operation cancelled by user"
+                exit 2
+            fi
+            
+            # Get model from user
+            par_model=$(dialog --keep-tite --stdout --inputbox "Enter printer model:\n\nValid models: K2Pro, K2Plus, K2Max" 12 60 "K2Pro")
+            if [ $? -ne 0 ] || [ -z "$par_model" ]; then
+                echo "Operation cancelled by user"
+                exit 2
+            fi
+            
             echo "Downloading firmware..."
             #  Run fwdl.sh with the model and version as parameters
             $project_root/fwdl.sh $par_model $par_version
             all_files=$(ls $FW_DIR | grep -E ".zip|.bin|.swu")
         else
-            echo
             echo "Please download the firmware and place it in the FW folder"
             exit 2
         fi
@@ -177,6 +186,10 @@ if [ -z "$selected_firmware_file" ]; then
             firmware_files+=("")
         done
         firmware_file=$(dialog --keep-tite --stdout --menu "Which firmware do you want to use?" 22 76 16 "${firmware_files[@]}")
+        if [ $? -ne 0 ]; then
+            echo "Operation cancelled by user"
+            exit 3
+        fi
         if [ -n "$firmware_file" ] && [ -f "$FW_DIR/$firmware_file" ]; then
             echo "Using firmware $firmware_file"
         else
