@@ -24,7 +24,7 @@ stop_after_error=1
 downloaded=0
 
 if [ "$par_versions" = "latest" ] || [ "$par_versions" = "LATEST" ] || [ "$par_versions" = "last" ] || [ "$par_versions" = "LAST" ]; then
-  par_versions=$(curl -s "https://raw.githubusercontent.com/AGG2017/ACK2-Webserver/master/latest_version.txt")
+  par_versions=$(curl -s "https://raw.githubusercontent.com/cardil/ak2-dashboard/master/latest_version.txt")
 fi
 
 if [ "$par_versions" = "all" ] || [ "$par_versions" = "ALL" ]; then
@@ -32,7 +32,7 @@ if [ "$par_versions" = "all" ] || [ "$par_versions" = "ALL" ]; then
 fi
 
 if [ "$par_versions" = "scan" ] || [ "$par_versions" = "SCAN" ]; then
-  latest=$(curl -s "https://raw.githubusercontent.com/AGG2017/ACK2-Webserver/master/latest_version.txt")
+  latest=$(curl -s "https://raw.githubusercontent.com/cardil/ak2-dashboard/master/latest_version.txt")
   ver_h=$(echo "$latest" | awk -F. '{print $1}')
   ver_m=$(echo "$latest" | awk -F. '{print $2}')
   ver_l=$(echo "$latest" | awk -F. '{print $3}')
@@ -62,7 +62,7 @@ if [ "$par_models" = "all" ] || [ "$par_models" = "ALL" ]; then
 fi
 
 # check the required tools
-check_tools "curl wc awk"
+check_tools "curl wc awk md5sum"
 
 for par_model in $par_models; do
 
@@ -169,7 +169,14 @@ if [ $downloaded -eq 0 ]; then
   exit 5
 fi
 
+pushd "$project_root/FW" >/dev/null
+if ! md5sum --check --ignore-missing checksums.md5sum; then
+  echo -e "${RED}FAULT! Download invalid! Check network and try again...${NC}"
+  exit 6
+fi
+popd >/dev/null
+
 echo ""
-echo -e "${GREEN}DONE! The requested firmware has been downloaded in the folder FW ${NC}"
+echo -e "${GREEN}✓ DONE! The requested firmware has been downloaded in the folder FW ${NC}"
 echo ""
 exit 0
