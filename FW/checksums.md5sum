@@ -1,3 +1,29 @@
-90a564de611daa6a95a7a40bbb05099e  AC104_K2Pro_1.1.0_2.3.9_update.swu
+# ./fwdl.sh all all
+e95d10e1ef6b3554d8f311440fc2608d  AC104_K2Max_1.1.0_2.3.9_update.zip
+664b958a1698a871189cf2484424c0f7  AC104_K2Max_1.1.0_3.0.3_update.zip
+e14bc8eb3427e62c5b951b3322b2b76f  AC104_K2Max_1.1.0_3.0.5_update.bin
+86ce72e4096d1570f97c37b2538c871d  AC104_K2Max_1.1.0_3.0.9_update.bin
+14d06db1694d48cd9642974a7f4b45fb  AC104_K2Max_1.1.0_3.1.0_update.bin
+3105c347a9e5a9c0af1845ecf867be9b  AC104_K2Max_1.1.0_3.1.2_update.bin
+fd61a4562e9c6c4d0b36e6c3a8f18ba3  AC104_K2Plus_1.1.0_2.3.9_update.zip
+93ab28ddf981bfb1036e78207d7b2487  AC104_K2Plus_1.1.0_3.0.3_update.zip
+17b89994f2e03804e5ebc25c914134b9  AC104_K2Plus_1.1.0_3.0.5_update.bin
+5bb86b2752268af1b710b37db0157094  AC104_K2Plus_1.1.0_3.0.9_update.bin
+c421c63e0b08e48c7e1475c9ccdb0043  AC104_K2Plus_1.1.0_3.1.0_update.bin
+a79ac5d494bbee8729f1cc488aca13a9  AC104_K2Plus_1.1.0_3.1.2_update.bin
+b2a2ec4b270eb40a240422af5f3996e7  AC104_K2Pro_1.1.0_2.3.9_update.zip
 17bcab3a32be4dbaaa7c04e9f4af43b9  AC104_K2Pro_1.1.0_3.0.3_update.zip
+5955e2a1dc4f2c431111331956be8df9  AC104_K2Pro_1.1.0_3.0.5_update.bin
+b40c7a3a4ca8e20a760bfd37355952bb  AC104_K2Pro_1.1.0_3.0.9_update.bin
+1a70c859a01dd502b22776011ef28f94  AC104_K2Pro_1.1.0_3.1.0_update.bin
 377824998484b7ff5c4bf5841e7e6028  AC104_K2Pro_1.1.0_3.1.2_update.bin
+
+# Manual downloads
+90a564de611daa6a95a7a40bbb05099e  AC104_K2Pro_1.1.0_2.3.9_update.swu
+de6adec3ea6281c585a116674593a215  1872443076557496322_j3vwnimq.bin
+14d06db1694d48cd9642974a7f4b45fb  AC104_k2MAX_V3.1.0.bin
+c421c63e0b08e48c7e1475c9ccdb0043  AC104_k2PLUS_V3.1.0.bin
+1a70c859a01dd502b22776011ef28f94  AC104_k2PRO_V3.1.0.bin
+3105c347a9e5a9c0af1845ecf867be9b  ChituUpgrade_k2+Max_V3.1.2.bin
+a79ac5d494bbee8729f1cc488aca13a9  ChituUpgrade_k2+Plus_V3.1.2.bin
+377824998484b7ff5c4bf5841e7e6028  ChituUpgrade_k2+Pro_V3.1.2.bin
