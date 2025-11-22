@@ -9,32 +9,20 @@ fi
 project_root="$1"
 webserver_package="$2"
 
-package_name="${webserver_package%:*}"
-package_port="${webserver_package##*:}"
+# Parse pipe-delimited parameters: name|port|api_url
+IFS='|' read -r package_name package_port package_api <<< "$webserver_package"
+
+# Set default port if not specified
 if [ -z "$package_port" ]; then
-  package_port="8000"
+  package_port="80"
 fi
 
-check_tools "unzip app_version.sh app_model.sh dd printf cp sed"
+check_tools "unzip app_version.sh app_model.sh dd printf cp sed patch"
 
 # check the project root folder
 if [ ! -d "$project_root" ]; then
   echo -e "${RED}ERROR: Cannot find the folder '$project_root' ${NC}"
   exit 2
-fi
-
-# check the webserver package folder
-webserver_package_folder="$OPTIONS_DIR/webserver/$package_name"
-if [ ! -d "$webserver_package_folder" ]; then
-  echo -e "${RED}ERROR: Cannot find the folder '$webserver_package_folder' ${NC}"
-  exit 3
-fi
-
-# check the webserver package file
-webserver_package_file="${webserver_package_folder}/webserver.zip"
-if [ ! -f "$webserver_package_file" ]; then
-  echo -e "${RED}ERROR: Cannot find the file '$webserver_package_file' ${NC}"
-  exit 4
 fi
 
 # check the target folder
@@ -59,33 +47,50 @@ if [ $? != 0 ]; then
   exit 5
 fi
 
-# enable the selected webserver package
-current_folder="$PWD"
-cd "$target_folder" || exit 7
-unzip -oqq "$webserver_package_file"
-cd "$current_folder" || exit 8
-
-# copy the config file if provided or create a default one
-webserver_cfg_src="$KEYS_DIR/webserver.json"
-webserver_cfg_dst="$ROOTFS_DIR/opt/webfs/api/webserver.json"
-if [ -f "$webserver_cfg_src" ]; then
-  # config file provided
-  cp "$webserver_cfg_src" "$webserver_cfg_dst"
-  sed -i "s/@V@/$app_ver/g" "$webserver_cfg_dst"
-  sed -i "s/@M@/$app_model/g" "$webserver_cfg_dst"
-else
-  # use default config
-  echo "{\"printer_model\": \"$app_model\", \"update_version\": \"$app_ver\", \"mqtt_webui_url\": \"/\"}" >"$webserver_cfg_dst"
+# Process based on webserver type
+webserver_install_script="$OPTIONS_DIR/webserver/$package_name/install.sh"
+if [ ! -f "$webserver_install_script" ]; then
+  echo -e "${RED}ERROR: Unknown webserver package '$package_name'. Install script not found: $webserver_install_script${NC}"
+  exit 10
 fi
 
-# add "/opt/bin/webfsd -p port" to $project_root/unpacked/squashfs-root/etc/rc.local before the exit 0 line
+# Source the webserver-specific install script (no args needed - sourced scripts have access to parent vars)
+source "$webserver_install_script"
+
+# Check if webserver_cfg_dst was set by the install script
+if [ -z "$webserver_cfg_dst" ]; then
+  echo -e "${RED}ERROR: Install script did not set webserver_cfg_dst${NC}"
+  exit 11
+fi
+
+# Generate webserver.json config with optional API URL (common for both webservers)
+if [ -n "$package_api" ]; then
+  mqtt_webui_url="http://$package_api"
+else
+  mqtt_webui_url=""
+fi
+echo "{\"printer_model\": \"$app_model\", \"update_version\": \"$app_ver\", \"mqtt_webui_url\": \"$mqtt_webui_url\"}" >"$webserver_cfg_dst"
+
+# Add "/opt/bin/webfsd -p port" to rc.local using patch (common for both webservers)
 result=$(grep "/opt/bin/webfsd" "$target_folder/etc/rc.local")
 if [ -z "$result" ]; then
-  # add it only if not already done
-  sed -i "/exit 0/i /opt/bin/webfsd -p $package_port" "$target_folder/etc/rc.local"
+  # Create temporary patch file with actual port
+  temp_patch=$(mktemp)
+  sed "s/__PORT__/$package_port/g" "$OPTIONS_DIR/webserver/rc.local.patch" > "$temp_patch"
+  
+  # Apply patch
+  cd "$target_folder/etc" || exit 7
+  if ! patch -p0 < "$temp_patch"; then
+    echo -e "${RED}ERROR: Failed to patch rc.local. The file may have been modified.${NC}"
+    rm -f "$temp_patch"
+    exit 6
+  fi
+  rm -f "$temp_patch"
+  cd - > /dev/null || exit 8
 fi
+
 # extend the PATH to $project_root/unpacked/squashfs-root/etc/profile
 sed -i 's#export PATH="/usr/sbin:/usr/bin:/sbin:/bin"#export PATH="/usr/sbin:/usr/bin:/sbin:/bin:/opt/sbin:/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"#' "$ROOTFS_DIR/etc/profile"
 
-echo -e "${GREEN}SUCCESS: The selected webserver package has been successfully added ${NC}"
+echo -e "${GREEN}SUCCESS: The selected webserver package '$package_name' has been successfully added${NC}"
 exit 0

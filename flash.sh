@@ -5,7 +5,10 @@ project_root="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null && pwd )"
 # Source the utils.sh file
 source "$project_root/TOOLS/helpers/utils.sh" "$project_root"
 
-check_tools 'dialog'
+# Check if running in interactive terminal
+if [ -t 0 ]; then
+  check_tools 'dialog'
+fi
 
 # select a config file
 selected_config_file="options.cfg"
@@ -44,14 +47,24 @@ if [ -f "$selected_config_file" ]; then
 fi
 
 # use the auto install tool if present
-if [ -f "$auto_install_tool" ]; then
-  # Ask if the user wants to attempt to auto install the update now. If yes then run the auto install script
-  if dialog --keep-tite --yesno "Do you want to attempt to auto install the firmware via SSH?" 6 40; then
-    # Run the auto update tool
-    if [[ "$auto_install_tool" == *.py ]]; then
-      python3 "$auto_install_tool"
-    else
-      "$auto_install_tool"
-    fi
-  fi
+if [ ! -f "$auto_install_tool" ]; then
+  exit 0
+fi
+
+# Skip dialog in non-interactive terminals (CI)
+if [ ! -t 0 ]; then
+  echo "Non-interactive mode detected: skipping auto-install dialog"
+  exit 0
+fi
+
+# Ask if the user wants to attempt to auto install the update now
+if ! dialog --keep-tite --yesno "Do you want to attempt to auto install the firmware via SSH?" 6 40; then
+  exit 0
+fi
+
+# Run the auto update tool
+if [[ "$auto_install_tool" == *.py ]]; then
+  python3 "$auto_install_tool"
+else
+  "$auto_install_tool"
 fi
