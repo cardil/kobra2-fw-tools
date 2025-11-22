@@ -17,7 +17,7 @@ if [ -z "$package_port" ]; then
   package_port="80"
 fi
 
-check_tools "unzip app_version.sh app_model.sh dd printf cp sed"
+check_tools "unzip app_version.sh app_model.sh dd printf cp sed patch"
 
 # check the project root folder
 if [ ! -d "$project_root" ]; then
@@ -71,10 +71,22 @@ else
 fi
 echo "{\"printer_model\": \"$app_model\", \"update_version\": \"$app_ver\", \"mqtt_webui_url\": \"$mqtt_webui_url\"}" >"$webserver_cfg_dst"
 
-# Add "/opt/bin/webfsd -p port" to rc.local (common for both webservers)
+# Add "/opt/bin/webfsd -p port" to rc.local using patch (common for both webservers)
 result=$(grep "/opt/bin/webfsd" "$target_folder/etc/rc.local")
 if [ -z "$result" ]; then
-  sed -i "/exit 0/i /opt/bin/webfsd -p $package_port" "$target_folder/etc/rc.local"
+  # Create temporary patch file with actual port
+  temp_patch=$(mktemp)
+  sed "s/__PORT__/$package_port/g" "$OPTIONS_DIR/webserver/rc.local.patch" > "$temp_patch"
+  
+  # Apply patch
+  cd "$target_folder/etc" || exit 7
+  if ! patch -p0 < "$temp_patch"; then
+    echo -e "${RED}ERROR: Failed to patch rc.local. The file may have been modified.${NC}"
+    rm -f "$temp_patch"
+    exit 6
+  fi
+  rm -f "$temp_patch"
+  cd - > /dev/null || exit 8
 fi
 
 # extend the PATH to $project_root/unpacked/squashfs-root/etc/profile
