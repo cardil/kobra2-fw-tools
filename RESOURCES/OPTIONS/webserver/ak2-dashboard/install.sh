@@ -30,7 +30,7 @@ check_tools "git make npm g++"
 
 # Set defaults for ak2-dashboard build (can be overridden by environment variables)
 AK2_DASHBOARD_REPO="${AK2_DASHBOARD_REPO:-https://github.com/cardil/ak2-dashboard.git}"
-AK2_DASHBOARD_BRANCH="${AK2_DASHBOARD_BRANCH:-feature/ui-overhaul}"
+AK2_DASHBOARD_BRANCH="${AK2_DASHBOARD_BRANCH:-release-1.0}"
 
 # Create build directory
 build_dir="$project_root/build/ak2-dashboard"
